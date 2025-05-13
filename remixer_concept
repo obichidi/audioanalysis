@@ -38,7 +38,7 @@ print(os.getcwd())
 
 # os.chdir("sound_player looper_project")
 # Load all audio files from a folder
-input_folder = "/Users/obichidi/PycharmProjects/audio analysis/cool_stuff/remix_3"
+input_folder = "./remix_3"
 audio_files, sr = load_audio_files(input_folder)
 
 # Concatenate all audio files
@@ -50,7 +50,7 @@ speed_factors = [0.75, 1.25, 1.5]
 remixed_audio = remix_audio(concatenated_audio, sr, pitch_factors, speed_factors)
 
 # Save the remixed audio
-output_folder = "/Users/obichidi/PycharmProjects/demo/obi_vocals/vox"
+output_folder = "/vox"
 os.makedirs(output_folder, exist_ok=True)
 output_path = os.path.join(output_folder, "remixed_audio_test.wav")
 sf.write(output_path, remixed_audio, sr)
