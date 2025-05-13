@@ -1,0 +1,56 @@
+import os
+import numpy as np
+import librosa
+import soundfile as sf
+
+
+# Function to load all audio files from a folder
+def load_audio_files(input_folder):
+    audio_files = []
+    for file in os.listdir(input_folder):
+        if file.endswith((".mp3", ".wav")):
+            file_path = os.path.join(input_folder, file)
+            audio_array, sr = librosa.load(file_path, sr=None)
+            audio_files.append(audio_array)
+    return audio_files, sr
+
+
+# Function to concatenate all audio files in a list
+def concatenate_audio_files(audio_files):
+    return np.concatenate(audio_files)
+
+
+# Function to create a remix with pitch and speed changes
+def remix_audio(audio_array, sr, pitch_factors, speed_factors):
+    remix = np.array([])
+    for pitch_factor in pitch_factors:
+        for speed_factor in speed_factors:
+            # Apply pitch-shifting
+            audio_pitch_changed = librosa.effects.pitch_shift(y=audio_array, sr=sr, n_steps=pitch_factor)
+            # Apply time-stretching
+            audio_speed_changed = librosa.effects.time_stretch(y=audio_pitch_changed, rate=speed_factor)
+            # Concatenate the result to the remix
+            remix = np.concatenate((remix, audio_speed_changed))
+    return remix
+
+
+print(os.getcwd())
+
+# os.chdir("sound_player looper_project")
+# Load all audio files from a folder
+input_folder = "/Users/obichidi/PycharmProjects/audio analysis/cool_stuff/remix_3"
+audio_files, sr = load_audio_files(input_folder)
+
+# Concatenate all audio files
+concatenated_audio = concatenate_audio_files(audio_files)
+
+# Create a remix with different pitch and speed changes
+pitch_factors = [0, 5, -5]
+speed_factors = [0.75, 1.25, 1.5]
+remixed_audio = remix_audio(concatenated_audio, sr, pitch_factors, speed_factors)
+
+# Save the remixed audio
+output_folder = "/Users/obichidi/PycharmProjects/demo/obi_vocals/vox"
+os.makedirs(output_folder, exist_ok=True)
+output_path = os.path.join(output_folder, "remixed_audio_test.wav")
+sf.write(output_path, remixed_audio, sr)
